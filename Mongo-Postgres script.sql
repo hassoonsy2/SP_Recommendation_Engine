@@ -26,7 +26,7 @@ CREATE TABLE prijs(
 id_prijs varchar(300) NOT NULL,
 discount varchar(300),
 selling_price varchar(300),
-FOREIGN KEY(id_prijs) REFERENCES product(id_product),
+FOREIGN KEY(id_prijs) REFERENCES product(id_product)on delete cascade on update cascade ,
 PRIMARY KEY(id_prijs)
 );
 
@@ -35,6 +35,6 @@ PRIMARY KEY(id_prijs)
 CREATE TABLE properties(
 id_properties varchar(300) NOT NULL,
 variant varchar(300),
-FOREIGN KEY(id_properties) REFERENCES product(id_product),
+FOREIGN KEY(id_properties) REFERENCES product(id_product) on delete cascade on update cascade ,
 PRIMARY KEY(id_properties)
 );
