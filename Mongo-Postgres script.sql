@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS properties CASCADE ;
 DROP TABLE IF EXISTS profiels CASCADE;
 DROP TABLE IF EXISTS  orders CASCADE;
 DROP TABLE IF EXISTS sessions CASCADE;
-DROP TABLE IF EXISTS profiel_recommndations CASCADE;
+DROP TABLE IF EXISTS previously_recommended CASCADE;
 
 
 
@@ -41,7 +41,7 @@ PRIMARY KEY(id_properties)
 
 CREATE TABLE profiels(
 	id_profiel varchar(300) NOT NULL,
-	browsersid TEXT [] unique ,
+	browsersid varchar array unique ,
 	segment varchar(300),
 	first_date timestamp  , 
 	last_date timestamp ,
@@ -49,12 +49,11 @@ CREATE TABLE profiels(
 
 );
 
-CREATE TABLE profiel_recommndations(
+CREATE TABLE previously_recommended(
 	id_profiel varchar(300) NOT NULL,
-	viewed_before_id varchar array,
-	similars_id varchar array,
-	previously_recommended varchar array,
-	FOREIGN KEY(id_profiel) REFERENCES profiels(id_profiel) on delete cascade on update cascade
+	id_product varchar(300) NOT NULL,
+	FOREIGN KEY(id_profiel) REFERENCES profiels(id_profiel) on delete cascade on update cascade,
+	FOREIGN KEY(id_product) REFERENCES product(id_product) on delete cascade on update cascade
 	
 );	
 
@@ -81,7 +80,8 @@ CREATE TABLE orders(
 	id_product varchar(300)NOT NULL,
 	id_profiel_o varchar(300) NOT NULL,
 	PRIMARY KEY(id_product),
-	FOREIGN KEY(id_profiel_o) REFERENCES profiels(id_profiel) on delete cascade on update cascade 
+	FOREIGN KEY(id_profiel_o) REFERENCES profiels(id_profiel) on delete cascade on update cascade,
+	FOREIGN KEY(id_product) REFERENCES product(id_product) on delete cascade on update cascade 
 );
 
 
