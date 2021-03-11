@@ -11,6 +11,7 @@ sessions = database["sessions"]
 
 def connect():
     """This function is the connection with the postgres db"""
+    global connection
     connection = psycopg2.connect(host='localhost', database='huwebshop', user='postgres', password='Xplod_555')
     return connection
 
@@ -18,6 +19,11 @@ def disconnect():
     """This function disconnects the program with the postgres db"""
     con = connect()
     return con.close()
+
+def sql_execute(sql,value):
+    """This function executes a query on the Postgres db"""
+    cur = connection.cursor()
+    cur.execute(sql,value)
 
 def data_laden_product():
     """This function loads data from the table "Products" out of the MongoDB
@@ -46,12 +52,11 @@ def data_laden_product():
                     variant = properties["variant"]
 
                     # The data is being sent to the Postgres db.
-                    cur.execute(
-                        "insert into  product (id_product , naam , category , sub_category , sub_sub_category ,gender , brand ) values (%s ,%s , %s , %s , %s, %s , %s)",
+                    sql_execute('insert into  product(id_product,naam,category,sub_category,sub_sub_category,gender,brand) values (%s ,%s , %s , %s , %s, %s , %s)',
                         [id1, naam, category, sub_category, sub_sub_category, gender, brand])
-                    cur.execute("insert into  prijs (id_prijs ,discount ,selling_price) values (%s ,%s,%s )",
+                    sql_execute('insert into  prijs (id_prijs ,discount ,selling_price) values (%s ,%s,%s )',
                             [id1, discount, selling_price])
-                    cur.execute("insert into  properties (id_properties ,variant) values (%s ,%s )",
+                    sql_execute('insert into  properties (id_properties ,variant) values (%s ,%s )',
                                 [id1, variant])
 
                 else:
@@ -94,11 +99,11 @@ def data_laden_profiles():
                     continue
 
                 # The data is being sent to the Postgres db.
-                cur.execute("insert into  profiels(id_profiel ,  segment , last_date ) values (%s ,%s , %s )",
+                sql_execute("insert into  profiels(id_profiel ,  segment , last_date ) values (%s ,%s , %s )",
                             [id1, segment, last_visit])
-                cur.execute("insert into  previously_recommended (id_profiel , id_product  ) values (%s ,%s  )",
+                sql_execute("insert into  previously_recommended (id_profiel , id_product  ) values (%s ,%s  )",
                             [id1, product_id])
-                cur.execute("insert into  buids(id_profiel , browsersid  ) values (%s ,%s  )",
+                sql_execute("insert into  buids(id_profiel , browsersid  ) values (%s ,%s  )",
                             [id1, browserid])
                 connection.commit()
 
@@ -134,7 +139,7 @@ def data_laden_sessions():
                 user_agent_device = user_agent["device"]["family"]
 
                 # The data is being sent to the Postgres db.
-                cur.execute("insert into  sessions(session_id , profile_id , session_start, session_end, has_sale, user_agent_browser, user_agent_device, segment_sessions) values (%s ,%s , %s ,%s ,%s , %s ,%s , %s )",
+                sql_execute("insert into  sessions(session_id , profile_id , session_start, session_end, has_sale, user_agent_browser, user_agent_device, segment_sessions) values (%s ,%s , %s ,%s ,%s , %s ,%s , %s )",
                             [id1, buid,session_start,session_end,has_sale,user_agent_browser,user_agent_device,segment])
                 connection.commit()
 
@@ -153,6 +158,4 @@ def data_laden_sessions():
 #Here are the three functions that will load all of the data into the Postgres db. They need to be called one at a time because of the large data sets that have to load.
 #data_laden_sessions()
 #data_laden_profiles()
-data_laden_product()
-
-
+#data_laden_product()
